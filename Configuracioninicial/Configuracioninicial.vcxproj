@@ -19,9 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Main_Dibujo2D.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\Shader.h" />
   </ItemGroup>
   <ItemGroup>
