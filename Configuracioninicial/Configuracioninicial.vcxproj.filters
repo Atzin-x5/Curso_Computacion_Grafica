@@ -18,16 +18,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClCompile Include="Main_P3.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Shader\core.frag">
+    <None Include="Shader\core.vs">
       <Filter>Resource Files\Shader</Filter>
     </None>
-    <None Include="..\Shader\core.vs">
+    <None Include="Shader\core.frag">
       <Filter>Resource Files\Shader</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
