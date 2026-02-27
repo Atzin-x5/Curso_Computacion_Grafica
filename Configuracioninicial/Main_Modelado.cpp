@@ -1,9 +1,7 @@
 //Ugalde Santos Atzin
 //319057399
-// previo 4
-//fecha de entrega: 24/02/2026
-
-
+// practica 4
+//fecha de entrega: 01/03/2026
 
 
 #include<iostream>
@@ -205,36 +203,120 @@ int main() {
 
 		glBindVertexArray(VAO);
 
+
+		// Base del cuerpo del zorro
+
 		model = glm::mat4(1.0f);
-		model = glm::scale(model, glm::vec3(3.0f, 0.1f, 2.0f));  // Ancho, grosor, profundidad
+		model = glm::scale(model, glm::vec3(4.0f, 3.0f, 7.1f));  // Ancho, grosor, profundidad
 		model = glm::translate(model, glm::vec3(0.0f, 0.6f, 0.0f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(1.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		//patitas del zorro 
+
+		model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(1.0f, 2.5f, 1.0f));  // Tamaño de la pata
+		model = glm::translate(model, glm::vec3(1.2f, 0.1f, 1.8f));  // Posiciona la pata
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		model = glm::mat4(1.0f);
-		model = glm::scale(model, glm::vec3(0.1f, 0.6f, 0.1f));  // Tamaño de la pata
-		model = glm::translate(model, glm::vec3(2.9f, -0.6f, 1.9f));  // Posiciona la pata
+		model = glm::scale(model, glm::vec3(1.0f, 2.5f, 1.0f));  // Tamaño de la pata
+		model = glm::translate(model, glm::vec3(-1.2f, 0.1f, 1.8f));  // Posiciona la pata
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		// Pata 2
 		model = glm::mat4(1.0f);
-		model = glm::scale(model, glm::vec3(0.1f, 0.6f, 0.1f));
-		model = glm::translate(model, glm::vec3(-2.9f, -0.6f, 1.9f));
+		model = glm::scale(model, glm::vec3(1.0f, 2.5f, 1.0f));  // Tamaño de la pata
+		model = glm::translate(model, glm::vec3(1.2f, 0.1f, -2.6f));  // Posiciona la pata
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		// Pata 3
 		model = glm::mat4(1.0f);
-		model = glm::scale(model, glm::vec3(0.1f, 0.6f, 0.1f));
-		model = glm::translate(model, glm::vec3(-2.9f, -0.6f, -1.9f));
+		model = glm::scale(model, glm::vec3(1.0f, 2.5f, 1.0f));  // Tamaño de la pata
+		model = glm::translate(model, glm::vec3(-1.2f, 0.1f, -2.6f));  // Posiciona la pata
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		// Pata 4
+		//cabeza del zorro
+
 		model = glm::mat4(1.0f);
-		model = glm::scale(model, glm::vec3(0.1f, 0.6f, 0.1f));
-		model = glm::translate(model, glm::vec3(2.9f, -0.6f, -1.9f));
+		model = glm::scale(model, glm::vec3(4.3f, 4.0f, 2.0f));  // Tamaño de la pata
+		model = glm::translate(model, glm::vec3(0.0f, 0.5f, 2.0f));  // Posiciona la pata
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		//nariz del zorro
+
+		model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(1.9f, 1.4f,1.7f));  // Tamaño de la pata
+		model = glm::translate(model, glm::vec3(0.0f, 1.3f, 3.4f));  // Posiciona la pata
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(1.1f, 0.7f, 1.0f));  // Tamaño de la pata
+		model = glm::translate(model, glm::vec3(0.0f, 3.0f, 6.4f));  // Posiciona la pata
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
+		//orejas del zorro
+
+		model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(1.1f, 0.7f, 1.0f));  // Tamaño de la pata
+		model = glm::translate(model, glm::vec3(1.0f, 6.0f, 3.6f));  // Posiciona la pata
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	
+		model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(0.5f, 0.3f, 0.4f));  // Tamaño de la pata
+		model = glm::translate(model, glm::vec3(2.2f, 15.5f, 8.8f));  // Posiciona la pata
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(1.1f, 0.7f, 1.0f));  // Tamaño de la pata
+		model = glm::translate(model, glm::vec3(-1.0f, 6.0f, 3.6f));  // Posiciona la pata
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(0.5f, 0.3f, 0.4f));  // Tamaño de la pata
+		model = glm::translate(model, glm::vec3(-2.2f, 15.5f, 8.8f));  // Posiciona la pata
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		//cola del zorro
+
+		model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(3.0f, 1.0f, 1.2f));  // Ancho, grosor, profundidad
+		model = glm::translate(model, glm::vec3(0.0f, 3.2f, -2.7f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
+		model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(2.3f, 1.0f, 1.2f));  // Ancho, grosor, profundidad
+		model = glm::translate(model, glm::vec3(0.0f, 2.8f, -3.4f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(1.8f, 1.0f, 1.2f));  // Ancho, grosor, profundidad
+		model = glm::translate(model, glm::vec3(0.0f, 3.5f, -4.2f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(1.3f, 1.0f, 1.2f));  // Ancho, grosor, profundidad
+		model = glm::translate(model, glm::vec3(0.0f, 3.9f, -4.9f));
+		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
