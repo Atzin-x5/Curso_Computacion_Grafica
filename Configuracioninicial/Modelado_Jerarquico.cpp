@@ -1,6 +1,6 @@
 //Ugalde Santos Atzin
 //319057399
-//previo 4 Modelado Jerarquico
+//previo 5 Modelado Jerarquico
 //03 de marzo del 2026
 
 
