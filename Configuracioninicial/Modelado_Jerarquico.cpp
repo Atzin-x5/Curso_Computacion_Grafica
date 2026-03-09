@@ -183,7 +183,7 @@ int main() {
 
         glBindVertexArray(VAO);
 
-        //Model Bicep
+        //Bicep
         model = glm::rotate(model, glm::radians(hombro), glm::vec3(0.0f, 0.0, 1.0f)); //hombro
         modelTemp = model = glm::translate(model, glm::vec3(1.5f, 0.0f, 0.0f));
         model = glm::scale(model, glm::vec3(3.0f, 1.0f, 1.0f));
@@ -193,7 +193,7 @@ int main() {
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         glDrawArrays(GL_TRIANGLES, 0, 36);//A
 
-        //Model antebrazo
+        //antebrazo
         model = glm::translate(modelTemp, glm::vec3(1.5f, 0.0f, 0.0f));
         model = glm::rotate(model, glm::radians(codo), glm::vec3(0.0f, 1.0f, 0.0f));
         modelTemp = model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
@@ -204,7 +204,7 @@ int main() {
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         glDrawArrays(GL_TRIANGLES, 0, 36); //B
 
-        //Model Palma
+        //Palma
         model = glm::translate(modelTemp, glm::vec3(1.0f, 0.0f, 0.0f));
         model = glm::rotate(model, glm::radians(muneca), glm::vec3(1.0f, 0.0f, 0.0f));
         modelTemp2 = modelTemp = model = glm::translate(model, glm::vec3(0.3f, 0.0f, 0.0f));
@@ -215,14 +215,14 @@ int main() {
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         glDrawArrays(GL_TRIANGLES, 0, 36); //C
 
-        //Model 5 Dedos implementados con la lógica original
+		//creacion de los 5 dedos, cada uno con una rotacion diferente para simular la apertura de la mano
         for (int i = 0; i < 5; i++) {
             float alpha = i * 72.0f;
 
-            // Usamos modelTemp2 (centro de la palma) para rotar radialmente
+            // Centro de la palma
             glm::mat4 baseRotada = glm::rotate(modelTemp2, glm::radians(alpha), glm::vec3(1.0f, 0.0f, 0.0f));
 
-            //Model Dedo A (Segmento 1)
+            //Dedo1
             model = glm::translate(baseRotada, glm::vec3(0.25f, 0.35f, 0.0f));
             model = glm::rotate(model, glm::radians(dedo1), glm::vec3(0.0f, 0.0f, 1.0f));
             modelTemp = model = glm::translate(model, glm::vec3(0.5f, 0.0f, 0.0f));
@@ -233,10 +233,10 @@ int main() {
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             glDrawArrays(GL_TRIANGLES, 0, 36); //D
 
-            //Model Dedo B (Segmento 2)
+            //Dedo2
             model = glm::translate(modelTemp, glm::vec3(0.5f, 0.0f, 0.0f));
             model = glm::rotate(model, glm::radians(dedo2), glm::vec3(0.0f, 0.0, 1.0f));
-            modelTemp = model = glm::translate(model, glm::vec3(0.5f, 0.0f, 0.0f)); // Actualizamos modelTemp para el siguiente dedo
+            modelTemp = model = glm::translate(model, glm::vec3(0.5f, 0.0f, 0.0f));
             model = glm::scale(model, glm::vec3(1.0f, 0.3f, 0.25f));
             color = glm::vec3(1.0f, 0.0f, 1.0f);
 
@@ -244,7 +244,7 @@ int main() {
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             glDrawArrays(GL_TRIANGLES, 0, 36);//E
 
-            //Model Dedo C (Segmento 3 - Nueva pieza)
+            //Dedo 3
             model = glm::translate(modelTemp, glm::vec3(0.5f, 0.0f, 0.0f));
             model = glm::rotate(model, glm::radians(dedo3), glm::vec3(0.0f, 0.0, 1.0f));
             model = glm::translate(model, glm::vec3(0.5f, 0.0f, 0.0f));
