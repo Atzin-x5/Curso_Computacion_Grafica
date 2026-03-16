@@ -1,0 +1,13 @@
+# Material para la madera
+newmtl wood
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+map_Kd Texture/wood-diffuse_124.jpg
+
+# Material para el metal (las patas)
+newmtl Metal
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.800000 0.800000 0.800000
+map_Kd Texture/metal_basecolor.jpg

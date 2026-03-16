@@ -1,7 +1,7 @@
-//319057399
+﻿//319057399
 //Atzin Ugalde Santos
-//10 de marzo del 2026
-//Carga de modelos y camara sintetica
+//15 de marzo del 2026
+//Practica6 Carga de modelos y camara sintetica
 
 
 
@@ -104,6 +104,12 @@ int main( )
     
     // Load models
     Model dog((char*) "Models/RedDog.obj");
+    Model cake((char*)"Models/cake.obj");
+    Model table((char*)"Models/Table.obj");
+    Model curtain((char*)"Models/uploads_files_4180038_pinch+pleat+curtain.obj");
+    Model hat((char*)"Models/Party Hat Package.obj");
+    Model fox((char*)"Models/Fox.obj");
+
     glm::mat4 projection = glm::perspective( camera.GetZoom( ), ( float )SCREEN_WIDTH/( float )SCREEN_HEIGHT, 0.1f, 100.0f );
     
   
@@ -131,14 +137,55 @@ int main( )
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
         // Draw the loaded model
+       
+        //---- Perro ----
         glm::mat4 model(1);
+        model = glm::translate(model, glm::vec3(0.0f, -0.8f, -2.5f));
+        model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		dog.Draw(shader);
-
-		model = glm::translate(model, glm::vec3(3.0f, 0.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
-		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         dog.Draw(shader);
+
+        // ---- Pastel ----
+        glm::mat4 modelCake(1);
+        modelCake = glm::translate(modelCake, glm::vec3(0.6f, -0.9f, -1.2f)); // posición a la izquierda
+        modelCake = glm::scale(modelCake, glm::vec3(0.004f, 0.004f, 0.004f));      // ajusta el tamaño
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(modelCake));
+        cake.Draw(shader);
+
+        // -----Mesa ----
+        glm::mat4 modeltable(1);
+        modeltable = glm::translate(modeltable, glm::vec3(0.0f, -2.0f, 0.0f)); // centro de la escena
+        modeltable = glm::scale(modeltable, glm::vec3(1.0f, 1.0f, 1.0f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(modeltable));
+        table.Draw(shader);
+
+        // ---- cortina -----
+        glm::mat4 modelCurtain(1);
+        modelCurtain = glm::translate(modelCurtain, glm::vec3(1.4f, -2.6f, -3.0f));
+        modelCurtain = glm::scale(modelCurtain, glm::vec3(3.3f, 3.3f, 3.3f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(modelCurtain));
+        curtain.Draw(shader);
+
+        //---- sombrerito de fiesta 1 ----
+        glm::mat4 modelHat(1);
+        modelHat = glm::translate(modelHat, glm::vec3(1.6f, -1.5f, -1.4f));
+        modelHat = glm::scale(modelHat, glm::vec3(0.04f, 0.04f, 0.04f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(modelHat));
+        hat.Draw(shader);
+
+        //---- sombrerito de fiesta 2 ----
+        glm::mat4 modelHat2(1);   // ← nombre diferente
+        modelHat2 = glm::translate(modelHat2, glm::vec3(0.0f, -1.1f, -2.0f));
+        modelHat2 = glm::scale(modelHat2, glm::vec3(0.03f, 0.03f, 0.03f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(modelHat2));
+        hat.Draw(shader);   
+
+        // ---- Zorro ----
+        glm::mat4 modelFox(1);
+        modelFox = glm::translate(modelFox, glm::vec3(1.9f, -1.4f, -1.4f));
+        modelFox = glm::scale(modelFox, glm::vec3(1.2f, 1.2f, 1.2f)); // ajusta si es necesario
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(modelFox));
+        fox.Draw(shader);
 
         // Swap the buffers
         glfwSwapBuffers( window );
