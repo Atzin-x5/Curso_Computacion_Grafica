@@ -38,9 +38,15 @@
     <None Include="Shader\lamp.vs">
       <Filter>Resource Files\Shader</Filter>
     </None>
+    <None Include="Shader\lighting.frag">
+      <Filter>Resource Files\Shader</Filter>
+    </None>
+    <None Include="Shader\lighting.vs">
+      <Filter>Resource Files\Shader</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Texturizado.cpp">
+    <ClCompile Include="Iluminacion.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
