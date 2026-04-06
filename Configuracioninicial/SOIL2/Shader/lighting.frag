@@ -83,10 +83,7 @@ void main( )
     // Spot light
     result += CalcSpotLight( spotLight, norm, FragPos, viewDir );
  	
-    // CAMBIO: se reemplaza .rgb por .a para leer el canal alpha de la textura.
-    // Esto permite que el vidrio (Glass01, d=0.70) sea semitransparente
-    // y el marco (Window_Painted, d=1.0) permanezca opaco, segun define el MTL.
-    color = vec4( result, texture(material.diffuse, TexCoords).a );
+    color = vec4( result,texture(material.diffuse, TexCoords).rgb );
 	  if(color.a < 0.1 && transparency==1)
         discard;
 
