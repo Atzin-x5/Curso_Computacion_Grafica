@@ -1,6 +1,6 @@
 #version 330 core
 
-#define NUMBER_OF_POINT_LIGHTS 4
+#define NUMBER_OF_POINT_LIGHTS 1
 
 struct Material
 {
@@ -60,10 +60,6 @@ uniform SpotLight spotLight;
 uniform Material material;
 uniform int transparency;
 
-// uniform que controla que tipo de luz se aplica a cada modelo
-// 1 = solo direccional (gato), 2 = solo puntual (fox), 3 = solo spotlight (duck), 4 = piso (ambiental suave)
-uniform int lightMode;
-
 // Function prototypes
 vec3 CalcDirLight( DirLight light, vec3 normal, vec3 viewDir );
 vec3 CalcPointLight( PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir );
@@ -75,42 +71,22 @@ void main( )
     vec3 norm = normalize( Normal );
     vec3 viewDir = normalize( viewPos - FragPos );
     
-    vec3 result = vec3(0.0);
-
-    if(lightMode == 1) // Solo luz direccional (gato)
+    // Directional lighting
+    vec3 result = CalcDirLight( dirLight, norm, viewDir );
+    
+    // Point lights
+    for ( int i = 0; i < NUMBER_OF_POINT_LIGHTS; i++ )
     {
-        result = CalcDirLight( dirLight, norm, viewDir );
+        result += CalcPointLight( pointLights[i], norm, FragPos, viewDir );
     }
-    else if(lightMode == 2) // Solo luz puntual (fox)
-    {
-        for ( int i = 0; i < NUMBER_OF_POINT_LIGHTS; i++ )
-        {
-            result += CalcPointLight( pointLights[i], norm, FragPos, viewDir );
-        }
-    }
-    else if(lightMode == 3) // Solo spotlight (duck)
-    {
-        result = CalcSpotLight( spotLight, norm, FragPos, viewDir );
-    }
-    else if(lightMode == 4) // Piso - ambiental suave, visible pero sin demostrar un tipo de luz
-    {
-        // FIX: valor de 0.15 para que el piso sea visible sin estar totalmente oscuro
-        // pero sin mostrar efectos de iluminacion direccional/puntual/spotlight
-        result = vec3(0.15) * vec3( texture( material.diffuse, TexCoords ) );
-    }
-    else // Fallback: todas las luces (por si acaso)
-    {
-        result = CalcDirLight( dirLight, norm, viewDir );
-        for ( int i = 0; i < NUMBER_OF_POINT_LIGHTS; i++ )
-        {
-            result += CalcPointLight( pointLights[i], norm, FragPos, viewDir );
-        }
-        result += CalcSpotLight( spotLight, norm, FragPos, viewDir );
-    }
+    
+    // Spot light
+    result += CalcSpotLight( spotLight, norm, FragPos, viewDir );
  	
-    color = vec4( result, texture(material.diffuse, TexCoords).a );
-	if(color.a < 0.1 && transparency==1)
+    color = vec4( result,texture(material.diffuse, TexCoords).rgb );
+	  if(color.a < 0.1 && transparency==1)
         discard;
+
 }
 
 // Calculates the color when using a directional light.
