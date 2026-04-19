@@ -1,5 +1,5 @@
 //Atzin Ugalde Santos
-//Previo 10
+//Practica 10
 //Animacion basica
 //319057399
 
@@ -106,18 +106,41 @@ float vertices[] = {
 
 glm::vec3 Light1 = glm::vec3(0);
 //Anim
-float rotBall = 0;
 bool AnimBall = false;
 
-float movBallY = 0.0f;
+float orbitAngle = 0.0f; // Angulo actual de orbita del perro 
 
-bool ballGoingUp = true; 
+float orbitSpeed = 0.3f; // Velocidad de la orbita 
 
-float ballSpeed = 0.01f;
+float orbitRadius = 2.0f; // Radio mas amplio para que el recorrido sea mas abierto 
 
-float ballMinY = 0.0f; 
+float dogFaceOffset = 90.0f; // Offset de rotacion para que el perro mire hacia donde camina
 
-float ballMaxY = 1.7f;
+float ballBounceY = 0.0f; // Desplazamiento en Y de la pelota cuando rebota
+
+bool ballBouncing = false; //Indica si la pelota esta rebotando
+
+bool bouncingUp = true; //Indica si la pelota va subiendo o bajando en el rebote
+
+float bounceSpeed = 0.02f; //Velocidad del rebote de la pelota
+
+float bounceMaxY = 1.5f; //Altura maxima del rebote de la pelota
+
+float intersectTolerance = 15.0f; // Tolerancia en grados para detectar la interseccion perro-pelota
+
+float dogJumpY = 0.0f; //Desplazamiento en Y del perro cuando salta
+
+bool dogJumping = false; //Indica si el perro esta saltando
+
+bool dogJumpingUp = true; //Indica si el perro va subiendo o bajando en el salto
+
+float dogJumpSpeed = 0.015f; //Salto un poco mas rapido para que se sincronice mejor con el rebote de la pelota
+
+float dogJumpMaxY = 1.0f; // Altura maxima del salto del perro 
+
+float dogTilt = 0.0f; // Angulo de inclinacion del perro 
+
+float dogTiltSpeed = 0.7f; // Inclinacion mas rapida para que alcance los 45 grados durante el salto corto
 
 
 // Deltatime
@@ -128,12 +151,6 @@ int main()
 {
 	// Init GLFW
 	glfwInit();
-	// Set all the required options for GLFW
-	/*glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);*/
 
 	// Create a GLFWwindow object that we can use for GLFW's functions
 	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Animacion basica - Atzin", nullptr, nullptr);
@@ -153,9 +170,6 @@ int main()
 	// Set the required callback functions
 	glfwSetKeyCallback(window, KeyCallback);
 	glfwSetCursorPosCallback(window, MouseCallback);
-
-	// GLFW Options
-	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// Set this to true so GLEW knows to use a modern approach to retrieving function pointers and extensions
 	glewExperimental = GL_TRUE;
@@ -224,15 +238,10 @@ int main()
 		glEnable(GL_DEPTH_TEST);
 
 
-
-
-
-
 		// Use cooresponding shader when setting uniforms/drawing objects
 		lightingShader.Use();
 
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "diffuse"), 0);
-		//glUniform1i(glGetUniformLocation(lightingShader.Program, "specular"),1);
 
 		GLint viewPosLoc = glGetUniformLocation(lightingShader.Program, "viewPos");
 		glUniform3f(viewPosLoc, camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z);
@@ -295,33 +304,47 @@ int main()
 
 
 
-		//Carga de modelo 
+		//Carga de modelo del piso
 		view = camera.GetViewMatrix();
 		model = glm::mat4(1);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		Piso.Draw(lightingShader);
 
+		// =========================
+		float dogX = orbitRadius * sin(glm::radians(orbitAngle)); //Posicion X del perro en el circulo
+		// =========================
+		float dogZ = orbitRadius * cos(glm::radians(orbitAngle)); // Posicion Z del perro en el circulo
 		model = glm::mat4(1);
+		// =========================
+		model = glm::translate(model, glm::vec3(dogX, dogJumpY, dogZ)); // Mover el perro a su posicion en la orbita, incluyendo el salto en Y
+		// =========================
+		model = glm::rotate(model, glm::radians(orbitAngle + dogFaceOffset), glm::vec3(0.0f, 1.0f, 0.0f)); //Rotar para que la nariz siga el camino
+		// =========================
+		model = glm::rotate(model, glm::radians(-dogTilt), glm::vec3(1.0f, 0.0f, 0.0f)); // Signo negativo para que la inclinacion sea hacia el frente 
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 0);
 		Dog.Draw(lightingShader);
 
+		// =========================
+		float ballAngle = fmod(180.0f - orbitAngle + 360.0f, 360.0f); // La pelota va en direccion contraria
+		// =========================
+		float ballX = orbitRadius * sin(glm::radians(ballAngle)); // Posicion X de la pelota
+		// =========================
+		float ballZ = orbitRadius * cos(glm::radians(ballAngle)); // Posicion Z de la pelota
 		model = glm::mat4(1);
-		glEnable(GL_BLEND);//Avtiva la funcionalidad para trabajar el canal alfa
+		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		// =========================
+		model = glm::translate(model, glm::vec3(ballX, ballBounceY, ballZ)); // Mover la pelota incluyendo rebote en Y
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 1);
-		
-		model = glm::translate(model, glm::vec3(0.0f, movBallY, 0.0f)); // Solo traslacion en Y
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		Ball.Draw(lightingShader);
-		glDisable(GL_BLEND);  //Desactiva el canal alfa 
+		glDisable(GL_BLEND);
 		glBindVertexArray(0);
 
 
 		// Also draw the lamp object, again binding the appropriate shader
 		lampShader.Use();
-		// Get location objects for the matrices on the lamp shader (these could be different on a different shader)
 		modelLoc = glGetUniformLocation(lampShader.Program, "model");
 		viewLoc = glGetUniformLocation(lampShader.Program, "view");
 		projLoc = glGetUniformLocation(lampShader.Program, "projection");
@@ -331,13 +354,12 @@ int main()
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 		model = glm::mat4(1);
 		model = glm::translate(model, lightPos);
-		model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
+		model = glm::scale(model, glm::vec3(0.2f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		// Draw the light object (using light's vertex attributes)
 
 		model = glm::mat4(1);
 		model = glm::translate(model, pointLightPositions[0]);
-		model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
+		model = glm::scale(model, glm::vec3(0.2f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -363,32 +385,24 @@ int main()
 void DoMovement()
 {
 
-	// Camera controls
 	if (keys[GLFW_KEY_W] || keys[GLFW_KEY_UP])
 	{
 		camera.ProcessKeyboard(FORWARD, deltaTime);
-
 	}
 
 	if (keys[GLFW_KEY_S] || keys[GLFW_KEY_DOWN])
 	{
 		camera.ProcessKeyboard(BACKWARD, deltaTime);
-
-
 	}
 
 	if (keys[GLFW_KEY_A] || keys[GLFW_KEY_LEFT])
 	{
 		camera.ProcessKeyboard(LEFT, deltaTime);
-
-
 	}
 
 	if (keys[GLFW_KEY_D] || keys[GLFW_KEY_RIGHT])
 	{
 		camera.ProcessKeyboard(RIGHT, deltaTime);
-
-
 	}
 
 	if (keys[GLFW_KEY_T])
@@ -446,50 +460,119 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 		if (active)
 		{
 			Light1 = glm::vec3(1.0f, 1.0f, 0.0f);
-
 		}
 		else
 		{
-			Light1 = glm::vec3(0);//Cuado es solo un valor en los 3 vectores pueden dejar solo una componente
+			Light1 = glm::vec3(0);
 		}
 	}
 	if (keys[GLFW_KEY_N])
 	{
 		AnimBall = !AnimBall;
-
 	}
 }
+
 void Animation() {
-	if (AnimBall)
+	
+	if (AnimBall) 
 	{
 		
-		if (ballGoingUp) 
-		{
-			
-			movBallY += ballSpeed; //Incrementar posicion en Y
-			
-			if (movBallY >= ballMaxY) 
-			{
-				
-				ballGoingUp = false;
-			}
-		}
-	
-		else 
-		{
-			
-			movBallY -= ballSpeed; 
+		orbitAngle += orbitSpeed; // Avanzar el angulo de orbita
+		
+		if (orbitAngle >= 360.0f) orbitAngle -= 360.0f; //Mantener el angulo entre 0 y 360
 
-			if (movBallY <= ballMinY) 
+		
+		float diff1 = fabs(orbitAngle - 90.0f); // Distancia al primer punto de cruce
+		
+		float diff2 = fabs(orbitAngle - 270.0f); // Distancia al segundo punto de cruce
+		
+		if ((diff1 < intersectTolerance || diff2 < intersectTolerance) && !ballBouncing) /
+		{
+			
+			ballBouncing = true; //Activar el rebote de la pelota
+			
+			bouncingUp = true; // Pelota empieza subiendo
+			
+			dogJumping = true; // Activar el salto del perro al mismo tiempo
+			
+			dogJumpingUp = true; // Perro empieza subiendo
+		}
+
+		// =========================
+		//Logica del rebote de la pelota (sube y baja)
+		// =========================
+		if (ballBouncing)
+		{
+		
+			if (bouncingUp)
 			{
 				
-				ballGoingUp = true; 
+				ballBounceY += bounceSpeed;
+				
+				if (ballBounceY >= bounceMaxY)
+				{
+					
+					bouncingUp = false;
+				}
+			}
+			
+			else
+			{
+			
+				ballBounceY -= bounceSpeed;
+				
+				if (ballBounceY <= 0.0f)
+				{
+					
+					ballBounceY = 0.0f;
+					
+					ballBouncing = false;
+				}
 			}
 		}
-	}
-	else
-	{
-		//rotBall = 0.0f;
+
+		// =========================
+		//Logica del salto del perro 
+		// =========================
+		if (dogJumping) // Si el perro esta saltando
+		{
+		
+			if (dogJumpingUp) //Si el perro va subiendo
+			{
+				
+				dogJumpY += dogJumpSpeed; //Subir el perro
+				
+				dogTilt += dogTiltSpeed; // Inclinar el perro progresivamente
+				
+				if (dogTilt > 45.0f) dogTilt = 45.0f; // No pasar de 45 grados
+				
+				if (dogJumpY >= dogJumpMaxY) //Si llego al tope del salto
+				{
+					
+					dogJumpingUp = false; //Cambiar a bajar
+				}
+			}
+			
+			else //Si el perro va bajando
+			{
+			
+				dogJumpY -= dogJumpSpeed; // Bajar el perro
+				
+				dogTilt -= dogTiltSpeed; //Regresar la inclinacion progresivamente
+				
+				if (dogTilt < 0.0f) dogTilt = 0.0f; // No bajar de 0 grados
+				
+				if (dogJumpY <= 0.0f) // Si llego al suelo
+				{
+					
+					dogJumpY = 0.0f; // Fijar en el suelo
+					
+					dogTilt = 0.0f; // Asegurar que quede sin inclinacion
+					
+					dogJumping = false; //A Terminar el salto
+				}
+			}
+		}
 	}
 }
 
@@ -503,7 +586,7 @@ void MouseCallback(GLFWwindow* window, double xPos, double yPos)
 	}
 
 	GLfloat xOffset = xPos - lastX;
-	GLfloat yOffset = lastY - yPos;  // Reversed since y-coordinates go from bottom to left
+	GLfloat yOffset = lastY - yPos;
 
 	lastX = xPos;
 	lastY = yPos;
