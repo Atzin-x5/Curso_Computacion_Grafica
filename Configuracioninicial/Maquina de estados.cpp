@@ -1,7 +1,6 @@
 //Atzin Ugalde Santos
 //319057399
-//Previo 11
-//Animación por maquina de estados
+//Practica 11
 //21/04/2026
 
 
@@ -120,10 +119,43 @@ glm::vec3 dogPos(0.0f, 0.0f, 0.0f);
 float dogRot = 0.0f;
 bool step = false;
 
-// =======
-float limitePiso = 2.39f;
-// =======
 
+
+// Variables agregadas para la trayectoria del perro alrededor del piso.
+
+//   limiteSur    -> distancia que avanza al SUR   (+Z)  
+//   limiteEste   -> distancia que avanza al ESTE  (+X)  
+//   limiteNorte  -> distancia que avanza al NORTE (-Z)  
+//   limiteOeste  -> distancia que avanza al OESTE (-X)  - 
+
+float limiteSur = 2.2f;
+float limiteEste = 2.1f;
+float limiteNorte = 2.1f;
+float limiteOeste = 2.1f;
+
+
+// ZONA DE AJUSTES: VELOCIDADES
+
+float walkSpeed = 0.01f;
+float rotSpeed = 0.5f;
+
+// dogState: estado actual de la maquina de estados del recorrido.
+//   0  = inactivo
+//   1  = camina al sur  (+Z)     rotacion 0
+//   2  = gira hacia el este      (0   -> 90 )
+//   3  = camina al este  (+X)    rotacion 90
+//   4  = gira hacia el norte     (90  -> 180)
+//   5  = camina al norte (-Z)    rotacion 180
+//   6  = gira hacia el oeste     (180 -> 270)
+//   7  = camina al oeste (-X)    rotacion 270
+//   8  = gira hacia diagonal SE  (270 -> 405 equivalente a 45)
+//   9  = camina diagonal (+X,+Z) de regreso al origen
+//   10 = gira de 405 a 360 para reiniciar el loop apuntando al sur
+//
+// targetRot: angulo objetivo al que el perro debe llegar en cada giro.
+
+int   dogState = 0;
+float targetRot = 0.0f;
 
 // Deltatime
 GLfloat deltaTime = 0.0f;	// Time between current frame and last frame
@@ -509,10 +541,10 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode
 		AnimBall = !AnimBall;
 
 	}
+
 	if (keys[GLFW_KEY_B])
 	{
-		dogAnim = 1;
-
+		dogAnim = (dogAnim == 1) ? 0 : 1;
 	}
 
 }
@@ -529,35 +561,129 @@ void Animation() {
 		//printf("%f", rotBall);
 	}
 
-	if (dogAnim == 1) {       //Walk Animation
-		if (!step) {          //State 1
+
+	// Maquina de estados que controla la trayectoria del perro 
+	
+	if (dogAnim == 1) {
+
+		// Al iniciar por primera vez la animacion, arrancamos en el estado 1
+		if (dogState == 0) {
+			dogState = 1;
+		}
+
+		if (!step) {          
 			RLegs += 0.3f;
 			FLegs += 0.3f;
 			head += 0.3f;
 			tail += 0.3f;
-
-			if (RLegs > 15.0f) //Condition
-				step = true;
+			if (RLegs > 15.0f) step = true;
 		}
-		else
-		{                    //State 2
+		else {               
 			RLegs -= 0.3f;
 			FLegs -= 0.3f;
 			head -= 0.3f;
 			tail -= 0.3f;
-			if (RLegs < -15.0f) //Condition
-				step = false;
+			if (RLegs < -15.0f) step = false;
 		}
 
-		dogPos.z += 0.001;
-	}
+		// Maquina de estados del recorrido
+		switch (dogState) {
 
-	// =======
+		case 1: // Caminar al sur (+Z) hasta llegar al limite sur
+			dogPos.z += walkSpeed;
+			if (dogPos.z >= limiteSur) {
+				dogPos.z = limiteSur;   
+				targetRot = 90.0f;       
+				dogState = 2;
+			}
+			break;
 
-	if (dogPos.z >= limitePiso) {
-		dogAnim = 0;
+		case 2: // Giro suave de 0 a 90 grados (gira en el lugar)
+			dogRot += rotSpeed;
+			if (dogRot >= targetRot) {
+				dogRot = targetRot;
+				dogState = 3;
+			}
+			break;
+
+		case 3: // Caminar al este (+X) hasta el limite este
+			dogPos.x += walkSpeed;
+			if (dogPos.x >= limiteEste) {
+				dogPos.x = limiteEste;
+				targetRot = 180.0f;
+				dogState = 4;
+			}
+			break;
+
+		case 4: // Giro suave de 90 a 180 grados
+			dogRot += rotSpeed;
+			if (dogRot >= targetRot) {
+				dogRot = targetRot;
+				dogState = 5;
+			}
+			break;
+
+		case 5: // Caminar al norte (-Z) hasta el limite norte
+			dogPos.z -= walkSpeed;
+			if (dogPos.z <= -limiteNorte) {
+				dogPos.z = -limiteNorte;
+				targetRot = 270.0f;
+				dogState = 6;
+			}
+			break;
+
+		case 6: // Giro suave de 180 a 270 grados
+			dogRot += rotSpeed;
+			if (dogRot >= targetRot) {
+				dogRot = targetRot;
+				dogState = 7;
+			}
+			break;
+
+		case 7: // Caminar al oeste (-X) hasta el limite oeste
+			dogPos.x -= walkSpeed;
+			if (dogPos.x <= -limiteOeste) {
+				dogPos.x = -limiteOeste;
+				// 405 = 360 + 45: continua la rotacion en el mismo
+				// sentido para apuntar en diagonal sureste (+X,+Z)
+				targetRot = 405.0f;
+				dogState = 8;
+			}
+			break;
+
+		case 8: // Giro suave de 270 a 405 grados (apunta a la diagonal)
+			dogRot += rotSpeed;
+			if (dogRot >= targetRot) {
+				dogRot = targetRot;
+				dogState = 9;
+			}
+			break;
+
+		case 9: // Caminar en diagonal (+X,+Z) de regreso al origen
+			// Se usa 0.707 (aprox sqrt(2)/2) en cada componente para
+			// que la magnitud del vector diagonal sea igual a walkSpeed
+			// y la velocidad total se mantenga constante.
+			dogPos.x += walkSpeed * 0.707f;
+			dogPos.z += walkSpeed * 0.707f;
+			// Cuando el perro alcanza el origen, pasa al estado 10
+			// para girar y reiniciar el recorrido
+			if (dogPos.x >= 0.0f && dogPos.z >= 0.0f) {
+				dogPos.x = 0.0f;
+				dogPos.z = 0.0f;
+				dogState = 10;
+			}
+			break;
+
+		case 10: // Giro de 405 a 360 grados para reiniciar el loop
+			
+			dogRot -= rotSpeed;
+			if (dogRot <= 360.0f) {
+				dogRot = 0.0f;  
+				dogState = 1;     
+			}
+			break;
+		}
 	}
-	// =======
 
 }
 
