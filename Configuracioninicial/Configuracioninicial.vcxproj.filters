@@ -9,11 +9,11 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
+    <Filter Include="Header Files\Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Resource Files\Shader">
+    <Filter Include="Header Files\Resource Files\Shader">
       <UniqueIdentifier>{a0640b6b-2b85-48e0-b38b-f687be7448b5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -24,30 +24,39 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\modelLoading.frag">
-      <Filter>Resource Files\Shader</Filter>
+      <Filter>Header Files\Resource Files\Shader</Filter>
     </None>
     <None Include="Shader\modelLoading.vs">
-      <Filter>Resource Files\Shader</Filter>
+      <Filter>Header Files\Resource Files\Shader</Filter>
     </None>
     <None Include="Shader\lamp.frag">
-      <Filter>Resource Files\Shader</Filter>
+      <Filter>Header Files\Resource Files\Shader</Filter>
     </None>
     <None Include="Shader\lamp.vs">
-      <Filter>Resource Files\Shader</Filter>
+      <Filter>Header Files\Resource Files\Shader</Filter>
     </None>
     <None Include="Shader\lighting.frag">
-      <Filter>Resource Files\Shader</Filter>
+      <Filter>Header Files\Resource Files\Shader</Filter>
     </None>
     <None Include="Shader\lighting.vs">
-      <Filter>Resource Files\Shader</Filter>
+      <Filter>Header Files\Resource Files\Shader</Filter>
+    </None>
+    <None Include="Shader\SkyBox.frag">
+      <Filter>Header Files\Resource Files\Shader</Filter>
+    </None>
+    <None Include="Shader\SkyBox.vs">
+      <Filter>Header Files\Resource Files\Shader</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="KeyFrames.cpp">
-      <Filter>Resource Files</Filter>
+      <Filter>Header Files\Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
